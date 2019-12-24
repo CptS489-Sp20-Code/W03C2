@@ -305,6 +305,8 @@ document.getElementById("logRoundItem").onclick = function(e) {
   document.getElementById("logRoundDiv").style.display = "block";
   //Change page title:
   document.getElementById("topBarTitle").textContent = "Log New Round";
+   //Set label of form button appropriately
+   document.getElementById("submitBtnLabel").textContent = "Save Round Data";
   //Set pageLocked to true, thus indicating that we're on a page that may only
   //be exited by clicking on the left arrow at top left
   pageLocked = true;
