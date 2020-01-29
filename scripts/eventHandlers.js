@@ -269,6 +269,38 @@ function transitionToLockedPage(lockedPageId, lockedPageTitle) {
 }
 
 
+//addToOrUpdateRoundTable -- Helper function that adds a new round with unique index
+//roundIndex to the "My Rounds" table. The round is a "condensed view" that
+//shows only the date, course and score for the round, together with buttons to
+//view/edit the detailed round data and delete the round data.
+function addToOrUpdateRoundTable(add, roundIndex) {
+  let data = JSON.parse(localStorage.getItem("speedgolfUserData"));
+  let user = localStorage.getItem("userName");
+  let roundData = data[user].rounds[roundIndex]; //the round data to add/edit
+  let roundsTable = document.getElementById("myRoundsTable");
+  let roundRow;
+  if (add) { //add new row
+    //Test whether table is empty
+    if (roundsTable.rows[1].innerHTML.includes ("colspan")) {
+      //empty table! Need to remove this row before adding new one
+      roundsTable.deleteRow(1);
+     }
+     roundRow = roundsTable.insertRow(1); //insert new row
+     roundRow.id = "r-" + roundIndex; //set id of this row so we can edit/delete later per user input
+  } else { //update existing row
+    roundRow = document.getElementById("r-" + roundIndex);
+  }
+  //Add/update row with five cols to table
+  roundRow.innerHTML = "<td>" + roundData.date + "</td><td>" +
+   roundData.course + "</td><td>" + roundData.SGS + 
+   " (" + roundData.strokes +
+   " in " + roundData.minutes + ":" + roundData.seconds + 
+   ")</td>" +
+   "<td><button onclick='editRound(" + roundIndex + ")'><span class='fas fa-eye'>" +
+   "</span>&nbsp;<span class='fas fa-edit'></span></button></td>" +
+   "<td><button onclick='confirmDelete(" + roundIndex + ")'>" +
+   "<span class='fas fa-trash'></span></button></td>";
+}
 
 //saveRoundData -- Callback function called from logRoundForm's submit handler.
 //Stops the spinner and then saves the entered round data to local storage.
@@ -281,15 +313,11 @@ function saveRoundData() {
   let thisUser = localStorage.getItem("userName");
   let data = JSON.parse(localStorage.getItem("speedgolfUserData"));
    
-    //increment roundCount since we're adding a new round
-  data[thisUser].roundCount++;
-
-  //Initialize empty JavaScript object to store this new round
+  //Initialize empty JavaScript object to store new or updated round
   let thisRound = {}; //iniitalize empty object for this round
   let temp; //temporary value for storying DOM elements as needed
 
   //Store the data
-  thisRound.roundNum = data[thisUser].roundCount;
   thisRound.date = document.getElementById("roundDate").value; //round date
   thisRound.course = document.getElementById("roundCourse").value;
   temp = document.getElementById("roundType");
@@ -302,24 +330,40 @@ function saveRoundData() {
   thisRound.SGS = document.getElementById("roundSGS").value;
   thisRound.notes = document.getElementById("roundNotes").value;
 
+  //Determine whether we're saving new or editing existing round, saving accordingly
+  let submitBtnLabel = document.getElementById("submitBtnLabel").textContent;
+  let addNew;
+
+  if (submitBtnLabel == "Save Round Data") {
+    //Adding new round
+    addNew = true;
+    //Add 1 to roundCount, setting thisRound's roundNum to that value
+    thisRound.roundNum = ++(data[thisUser].roundCount);
+    data[thisUser].rounds[thisRound.roundNum] = thisRound; //add to local storage 
+  } else {
+    //Editing existing round
+    addNew = false;
+    //Grab index of round being edited from localStorage. It was set in editRound()
+    thisRound.roundNum = Number(localStorage.getItem("roundIndex")); 
+  }
+
   //Add this round to associative array of rounds
-  data[thisUser].rounds[data[thisUser].roundCount] = thisRound;
+  data[thisUser].rounds[thisRound.roundNum] = thisRound;
 
   //Commit updated user data to app data in local storage
   localStorage.setItem("speedgolfUserData",JSON.stringify(data));
-  
-  //Show alert box with current state of speedgolfUserData for debugging purposes
-  data = localStorage.getItem('speedgolfUserData');
-  
-  //Add new round to "My Rounds" table
-  addRoundToTable(thisRound.roundNum);
 
   //Go back to "My Rounds" page by programmatically clicking the menu button
   document.getElementById("menuBtn").click();
 
   //Clear form to ready for next use
- clearRoundForm();
+  clearRoundForm();
+
+  //Add to or update "My Rounds" table
+  addToOrUpdateRoundTable(addNew, thisRound.roundNum);
+
 }
+
 
 //addRoundToTable -- Helper function that adds a new round with unique index
 //roundIndex to the "My Rounds" table. The round is a "condensed view" that
