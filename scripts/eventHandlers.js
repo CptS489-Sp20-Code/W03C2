@@ -231,6 +231,44 @@ function clearRoundForm() {
   document.getElementById("roundNotes").value = "";
 }
 
+//fillRoundForm -- When the user chooses to view/edit an existing round, we need
+//to fill the round form with the corresponding round data and provide the
+//option to update the data
+function fillRoundForm(round) {
+  document.getElementById("roundDate").value = round.date;
+  document.getElementById("roundCourse").value = round.course;
+  document.getElementById("roundType").value = round.type;
+  document.getElementById("roundHoles").value = round.numHoles;
+  document.getElementById("roundStrokes").value = round.strokes;
+  document.getElementById("roundMinutes").value = round.minutes;
+  document.getElementById("roundSeconds").value = round.seconds;
+  document.getElementById("roundSGS").value = round.SGS;
+  document.getElementById("roundNotes").value = round.notes;
+}
+
+//transitionToLockedPage: Take the user to a locked page that is subsidiary to
+//the main mode page. The new page is identified by lockedPageId and should have
+//the title lockedPageTitle. Note: Any other tweaks to the locked page (e.g., 
+//changing of button labels or hiding/showing of input fields and controls) must
+//be done manually before or after calling this function.
+function transitionToLockedPage(lockedPageId, lockedPageTitle) {
+  //Swap pages
+  document.getElementById(mode + "MainDiv").style.display = "none";
+  document.getElementById(lockedPageId).style.display = "block";
+  //Change page title
+  document.getElementById("topBarTitle").textContent = lockedPageTitle;
+  //Set pageLocked to true, thus indicating that we're on a page that may only
+  //be exited by clicking on the left arrow at top left
+  pageLocked = true;
+  //When pageLocked is true, the menu  icon is the left arrow
+  document.getElementById("menuBtnIcon").classList.remove("fa-times");
+  document.getElementById("menuBtnIcon").classList.remove("fa-bars");
+  document.getElementById("menuBtnIcon").classList.add("fa-arrow-left");
+  //When pageLocked is true, the bottom bar buttons are disabled
+  document.getElementById("bottomBar").classList.add("disabledButton");
+}
+
+
 
 //saveRoundData -- Callback function called from logRoundForm's submit handler.
 //Stops the spinner and then saves the entered round data to local storage.
@@ -343,6 +381,7 @@ document.getElementById("logRoundItem").onclick = function(e) {
   //Change page title:
   document.getElementById("topBarTitle").textContent = "Log New Round";
    //Set label of form button appropriately
+   document.getElementById("saveIcon").classList.remove("fas","fa-edit");
    document.getElementById("saveIcon").classList.add("fas","fa-save");
    document.getElementById("submitBtnLabel").textContent = "Save Round Data";
   //Set pageLocked to true, thus indicating that we're on a page that may only
@@ -354,6 +393,30 @@ document.getElementById("logRoundItem").onclick = function(e) {
   //When pageLocked is true, the bottom bar buttons are disabled
   document.getElementById("bottomBar").classList.add("disabledButton");
 }
+
+//editRound: Event handler called when "View/Edit" button clicked in "My Rounds"
+//table. roundIndex indicates the index of the round that was clicked. Grab
+//the round data from local storage, fill it into the edit form and transition
+//to the view/edit round page.
+function editRound(roundIndex) {
+  //Grab appropriate round to view/edit from localStorage
+  let data = JSON.parse(localStorage.getItem("speedgolfUserData"));
+  let user = localStorage.getItem("userName");
+  
+  //Pre-populate form with round data
+  fillRoundForm(data[user].rounds[roundIndex]);
+
+  //Set local storage var to index of round being edited. This will allow us to
+  //save updated data to correct round when the user clicks "Update Round Data"
+  localStorage.setItem("roundIndex",roundIndex);
+
+  //Transition to round view/edit page with "Update" label for form submit button
+  document.getElementById("saveIcon").classList.remove("fas","fa-save");
+  document.getElementById("saveIcon").classList.add("fas","fa-edit");
+  document.getElementById("submitBtnLabel").textContent = "Update Round Data";
+  transitionToLockedPage("logRoundDiv","View/Edit Round");
+}
+
 
 //ADDITIONAL AUXILARY FUNCTIONS GO HERE
 //updateSGS --When the strokes, minutes or seconds fields are updated, we need
