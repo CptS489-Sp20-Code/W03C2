@@ -184,6 +184,11 @@ function login() {
      //No data for this user -- create empty data
      data[thisUser] = {"rounds": {}, "roundCount": 0}; 
      localStorage.setItem("speedgolfUserData",JSON.stringify(data));
+   } else {
+    //There is data for this user; add it to the "My Rounds" table
+    for (const round in data[thisUser].rounds) {
+      addRoundToTable(data[thisUser].rounds[round].roundNum);
+    } 
    }
  }
 }
