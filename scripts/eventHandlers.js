@@ -176,7 +176,7 @@ function login() {
   let data = localStorage.getItem("speedgolfUserData");
   if (data == null) { 
     //No user app data stored yet -- create blank record for current user
-    localStorage.setItem("speedgolfUserData",JSON.stringify({thisUser : {"rounds" : {}, "roundCount": 0}}));  
+    localStorage.setItem("speedgolfUserData",JSON.stringify({[thisUser] : {"rounds" : {}, "roundCount": 0}}));  
   } else {
    //app data exists -- check if data exists for thisUser
    data = JSON.parse(data);
