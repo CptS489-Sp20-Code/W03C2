@@ -267,7 +267,9 @@ function saveRoundData() {
   
   //Show alert box with current state of speedgolfUserData for debugging purposes
   data = localStorage.getItem('speedgolfUserData');
-  alert("speedgolfUserData: " +  data);
+  
+  //Add new round to "My Rounds" table
+  addRoundToTable(thisRound.roundNum);
 
   //Go back to "My Rounds" page by programmatically clicking the menu button
   document.getElementById("menuBtn").click();
@@ -275,6 +277,36 @@ function saveRoundData() {
   //Clear form to ready for next use
  clearRoundForm();
 }
+
+//addRoundToTable -- Helper function that adds a new round with unique index
+//roundIndex to the "My Rounds" table. The round is a "condensed view" that
+//shows only the date, course and score for the round, together with buttons to
+//view/edit the detailed round data and delete the round data.
+function addRoundToTable(roundIndex) {
+  let data = JSON.parse(localStorage.getItem("speedgolfUserData"));
+  let user = localStorage.getItem("userName");
+  let rounds = data[user].rounds;
+ //Test whether table is empty
+ let roundsTable = document.getElementById("myRoundsTable");
+ if (roundsTable.rows[1].innerHTML.includes ("colspan")) {
+   //empty table! Need to remove this row before adding new one
+   roundsTable.deleteRow(1);
+ }
+//Write new row with five cols to table
+ let round = roundsTable.insertRow(1);
+ round.id = "r-" + roundIndex; //set unique id of this row so we can edit/delete later
+
+ round.innerHTML = "<td>" + rounds[roundIndex].date + "</td><td>" +
+   rounds[roundIndex].course + "</td><td>" + rounds[roundIndex].SGS + 
+   " (" + rounds[roundIndex].strokes +
+   " in " + rounds[roundIndex].minutes + ":" + rounds[roundIndex].seconds + 
+   ")</td>" +
+   "<td><button onclick='editRound(" + roundIndex + ")'><span class='fas fa-eye'>" +
+   "</span>&nbsp;<span class='fas fa-edit'></span></button></td>" +
+   "<td><button onclick='confirmDelete(" + roundIndex + ")'>" +
+   "<span class='fas fa-trash'></span></button></td>";
+}
+
 
 //MENU BUTTON HANDLERS GO HERE
 
@@ -306,6 +338,7 @@ document.getElementById("logRoundItem").onclick = function(e) {
   //Change page title:
   document.getElementById("topBarTitle").textContent = "Log New Round";
    //Set label of form button appropriately
+   document.getElementById("saveIcon").classList.add("fas","fa-save");
    document.getElementById("submitBtnLabel").textContent = "Save Round Data";
   //Set pageLocked to true, thus indicating that we're on a page that may only
   //be exited by clicking on the left arrow at top left

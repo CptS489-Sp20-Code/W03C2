@@ -9,7 +9,16 @@
 			{
 				"pattern": {
 					"type": "string",
-					"expression": "<div id=\"roundsModeMainDiv\" class=\"roundsModeDiv paddedPage\">\r\n    <h1></h1>\r\n    <table id=\"myRoundsTable\" class=\"table table-hover\">\r\n      <thead class=\"thead-light\">\r\n        <th>Date</th>\r\n        <th>Course</th>\r\n        <th>Score</th>\r\n        <th>View/Edit...</th>\r\n        <th>Delete</th>\r\n      </thead>\r\n      <tbody>\r\n        <tr\">\r\n         <td colspan=\"5\" style=\"font-style: italic\">No rounds added yet</td>\r\n        </tr> \r\n      </tbody>\r\n    </table>\r\n  </div>",
+					"expression": "//addRoundToTable -- Helper function that adds a new round with unique index\r\n//roundIndex to the \"My Rounds\" table. The round is a \"condensed view\" that\r\n//shows only the date, course and score for the round, together with buttons to\r\n//view/edit the detailed round data and delete the round data.\r\nfunction addRoundToTable(roundIndex) {\r\n  let data = JSON.parse(localStorage.getItem(\"speedgolfUserData\"));\r\n  let user = localStorage.getItem(\"userName\");\r\n  let rounds = data[user].rounds;\r\n //Test whether table is empty\r\n let roundsTable = document.getElementById(\"myRoundsTable\");\r\n if (roundsTable.rows[1].innerHTML.includes (\"colspan\")) {\r\n   //empty table! Need to remove this row before adding new one\r\n   roundsTable.deleteRow(1);\r\n }\r\n//Write new row with five cols to table\r\n let round = roundsTable.insertRow(1);\r\n round.id = \"r-\" + roundIndex; //set unique id of this row so we can edit/delete later\r\n\r\n round.innerHTML = \"<td>\" + rounds[roundIndex].date + \"</td><td>\" +\r\n   rounds[roundIndex].course + \"</td><td>\" + rounds[roundIndex].SGS + \r\n   \" (\" + rounds[roundIndex].strokes +\r\n   \" in \" + rounds[roundIndex].minutes + \":\" + rounds[roundIndex].seconds + \r\n   \")</td>\" +\r\n   \"<td><button onclick='editRound(\" + roundIndex + \")'><span class='fas fa-eye'>\" +\r\n   \"</span>&nbsp;<span class='fas fa-edit'></span></button></td>\" +\r\n   \"<td><button onclick='confirmDelete(\" + roundIndex + \")'>\" +\r\n   \"<span class='fas fa-trash'></span></button></td>\";\r\n}",
+					"ignoreCase": false,
+					"wholeMatch": false
+				},
+				"color": "yellow"
+			},
+			{
+				"pattern": {
+					"type": "string",
+					"expression": "//Add new round to \"My Rounds\" table\r\n  addRoundToTable(thisRound.roundNum);",
 					"ignoreCase": false,
 					"wholeMatch": false
 				},
