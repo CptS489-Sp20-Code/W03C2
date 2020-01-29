@@ -162,8 +162,21 @@ small">Courses</span></a>
 
   <!-- Rounds page displaying the user's round history -->
   <div id="roundsModeMainDiv" class="roundsModeDiv paddedPage">
-      <h1 align="center">Rounds Page</h1>
-    <div w3-include-html="html/underConstruction.html" ></div>
+    <h1></h1>
+    <table id="myRoundsTable" class="table table-hover">
+      <thead class="thead-light">
+        <th>Date</th>
+        <th>Course</th>
+        <th>Score</th>
+        <th>View/Edit...</th>
+        <th>Delete</th>
+      </thead>
+      <tbody>
+        <tr">
+         <td colspan="5" style="font-style: italic">No rounds added yet</td>
+        </tr> 
+      </tbody>
+    </table>
   </div>
 
     <!-- Page for logging a new round -->

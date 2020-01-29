@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"textmarker.savedHighlights": [
+			{
+				"pattern": {
+					"type": "string",
+					"expression": "<div id=\"roundsModeMainDiv\" class=\"roundsModeDiv paddedPage\">\r\n    <h1></h1>\r\n    <table id=\"myRoundsTable\" class=\"table table-hover\">\r\n      <thead class=\"thead-light\">\r\n        <th>Date</th>\r\n        <th>Course</th>\r\n        <th>Score</th>\r\n        <th>View/Edit...</th>\r\n        <th>Delete</th>\r\n      </thead>\r\n      <tbody>\r\n        <tr\">\r\n         <td colspan=\"5\" style=\"font-style: italic\">No rounds added yet</td>\r\n        </tr> \r\n      </tbody>\r\n    </table>\r\n  </div>",
+					"ignoreCase": false,
+					"wholeMatch": false
+				},
+				"color": "yellow"
+			}
+		]
+	}
+}
